@@ -1,10 +1,7 @@
 from app.event.event import DomainEvent
 from dataclasses import dataclass
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 from uuid import UUID
-
-if TYPE_CHECKING:
-    from app.user.domain.model import UserCredential
 
 
 @dataclass
@@ -12,11 +9,6 @@ class UserCreated(DomainEvent):
     screen_id: str
     screen_name: Optional[str]
     bio: Optional[str]
-
-
-@dataclass
-class UserLoggedIn(DomainEvent):
-    pass
 
 
 @dataclass
@@ -37,8 +29,3 @@ class UsernameUpdated(DomainEvent):
 @dataclass
 class BioUpdated(DomainEvent):
     bio: str
-
-
-@dataclass
-class PasswordChanged(DomainEvent):
-    new_credential: "UserCredential"

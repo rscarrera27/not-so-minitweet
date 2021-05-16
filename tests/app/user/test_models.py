@@ -1,78 +1,19 @@
-from app.common.datetime import get_utc_datetime
 from app.user.domain.event import (
     BioUpdated,
     FollowedUser,
-    PasswordChanged,
     UnfollowedUser,
-    UserLoggedIn,
     UsernameUpdated,
 )
-from app.user.domain.model import User, UserCredential
+from app.user.domain.model import User
 from uuid import uuid4
 
 import pytest
 
 
-class UserCredentialStub(UserCredential):
-    def __init__(self, verify_return):
-        self.verify_return = verify_return
-
-    @staticmethod
-    def hash(new_password: str) -> UserCredential:
-        pass
-
-    def verify(self, password: str) -> bool:
-        return self.verify_return
-
-
 class TestUserAggregate:
     @pytest.fixture
     def user(self):
-        return User(
-            aggregate_id=uuid4(),
-            aggregate_version=0,
-            screen_id="a",
-            username="a",
-            bio=None,
-            following=set(),
-            credential=UserCredentialStub(verify_return=True),
-            last_login=get_utc_datetime(),
-        )
-
-    class TestLogin:
-        def test_with_valid_password(self):
-            last_login = get_utc_datetime()
-            user = User(
-                aggregate_id=uuid4(),
-                aggregate_version=0,
-                screen_id="a",
-                username="a",
-                bio=None,
-                following=set(),
-                credential=UserCredentialStub(verify_return=True),
-                last_login=last_login,
-            )
-
-            user.login("password")
-
-            assert user.last_login != last_login
-            assert isinstance(user.pending_events.pop(), UserLoggedIn)
-
-        def test_with_invalid_password(self):
-            last_login = get_utc_datetime()
-            user = User(
-                aggregate_id=uuid4(),
-                aggregate_version=0,
-                screen_id="a",
-                username="a",
-                bio=None,
-                following=set(),
-                credential=UserCredentialStub(verify_return=False),
-                last_login=last_login,
-            )
-
-            with pytest.raises(ValueError):
-                user.login("password")
+        return User(aggregate_id=uuid4(), aggregate_version=0, screen_id="a", username="a", bio=None, following=set())
 
     class TestUpdateUsername:
         def test_with_valid_username(self, user):
@@ -95,20 +36,6 @@ class TestUserAggregate:
         def test_with_too_long_bio(self, user):
             with pytest.raises(ValueError):
                 user.update_bio("x" * 200)
-
-    class TestChangePassword:
-        def test_when_password_verification_succeed(self, user):
-            new_cred = UserCredentialStub(verify_return=True)
-            user.change_password("old_pw", new_cred)
-
-            assert user.credential == new_cred
-            assert isinstance(user.pending_events.pop(), PasswordChanged)
-
-        def test_when_password_verification_failed(self, user):
-            user.credential = UserCredentialStub(verify_return=False)
-
-            with pytest.raises(ValueError):
-                user.change_password("wrong_pw", UserCredentialStub(verify_return=True))
 
     class TestFollowUser:
         def test_follow_user(self, user):
