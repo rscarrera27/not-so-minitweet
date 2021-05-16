@@ -7,8 +7,58 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
+fastapi = "^0.65.1"
+passlib = "^1.7.4"
 
 [tool.poetry.dev-dependencies]
+black = "^21.5b1"
+isort = "^5.8.0"
+pytest = "^6.2.4"
+pytest-coverage = "^0.0"
+mypy = "^0.812"
+pytest-mypy = "^0.8.1"
+pytest-asyncio = "^0.15.1"
+
+[tool.black]
+line-length = 120
+target_version = ['py39']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs         # exclude a few common directories in the
+  | \.git          # root of the project
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+py_version = '39'
+line_length = 120
+force_alphabetical_sort = true
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+skipsdist = True
+envlist =
+    py39
+
+[testenv]
+skip_install = True
+deps =
+    poetry
+commands =
+    poetry install --no-root
+    poetry run pytest
+"""
+
+[tool.pytest.ini_options]
+addopts = "-rsxX --mypy"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
