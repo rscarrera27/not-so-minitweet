@@ -4,6 +4,6 @@ from uuid import UUID
 
 
 @dataclass
-class LikeTweet(Command):
+class Unretweet(Command):
     tweet_id: UUID
-    liked_user_id: UUID
+    unretweeted_user_id: UUID
