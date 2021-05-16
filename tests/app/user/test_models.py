@@ -2,6 +2,7 @@ from app.user.domain.event import (
     BioUpdated,
     FollowedUser,
     UnfollowedUser,
+    UserCreated,
     UsernameUpdated,
 )
 from app.user.domain.model import User
@@ -14,6 +15,12 @@ class TestUserAggregate:
     @pytest.fixture
     def user(self):
         return User(aggregate_id=uuid4(), aggregate_version=0, screen_id="a", username="a", bio=None, following=set())
+
+    def test_new(self):
+        new_user = User.new("user", "User", "hello")
+
+        assert new_user.version == 0
+        assert isinstance(new_user.pending_events.pop(), UserCreated)
 
     class TestUpdateUsername:
         def test_with_valid_username(self, user):

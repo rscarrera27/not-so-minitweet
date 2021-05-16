@@ -7,7 +7,7 @@ from uuid import UUID
 @dataclass
 class UserCreated(DomainEvent):
     screen_id: str
-    screen_name: Optional[str]
+    username: Optional[str]
     bio: Optional[str]
 
 

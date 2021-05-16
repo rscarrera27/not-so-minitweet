@@ -6,14 +6,20 @@ from app.user.domain.event import (
     BioUpdated,
     FollowedUser,
     UnfollowedUser,
+    UserCreated,
     UsernameUpdated,
 )
 from dataclasses import dataclass
 from typing import Optional, Set
-from uuid import UUID
+from uuid import UUID, uuid4
 
 
 class UserAggregate(ABC, EventSourcedAggregate):
+    @staticmethod
+    @abstractmethod
+    def new(screen_id: str, username: str, bio: Optional[str]) -> UserAggregate:
+        pass
+
     @abstractmethod
     def update_username(self, new_username: str) -> None:
         pass
@@ -37,6 +43,16 @@ class User(UserAggregate):
     username: str
     bio: Optional[str]
     following: Set[UUID]
+
+    @staticmethod
+    def new(screen_id: str, username: str, bio: Optional[str]) -> UserAggregate:
+        new_user = User(uuid4(), -1, screen_id, username, bio, set())
+        new_user._update(UserCreated(screen_id, username, bio))
+
+        return new_user
+
+    def _handle_user_created(self, event: UserCreated) -> None:
+        return
 
     def update_username(self, new_username: str) -> None:
         if len(new_username) >= 10:
