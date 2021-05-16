@@ -3,5 +3,5 @@ from app.event.event import IntegrationEvent
 
 
 class IntegrationEventPublisher(ABC):
-    def publish(self, event: IntegrationEvent):
+    async def publish(self, event: IntegrationEvent) -> None:
         pass
