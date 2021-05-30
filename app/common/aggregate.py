@@ -76,6 +76,6 @@ class DirtyCheckedAggregate(Aggregate, _DirtyCheckingFields):
     def pending_changes(self) -> Dict[str, Any]:
         current_state = asdict(self)
 
-        deltas = {k: v for k, v in current_state.items() if (self._initial_state[k] != v)}
+        deltas = {k: v for k, v in current_state.items() if (self._initial_state.get(k, "MISSING") != v)}
 
         return deltas
