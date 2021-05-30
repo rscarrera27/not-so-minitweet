@@ -39,7 +39,10 @@ class Tweet(TweetAggregate):
 
     @staticmethod
     def new(text: str, tweeted_user_id: UUID) -> TweetAggregate:
-        return Tweet(uuid4(), text, tweeted_user_id, set(), set())
+        _self = Tweet(uuid4(), text, tweeted_user_id, set(), set())
+        _self._initial_state = {}
+
+        return _self
 
     def like(self, liked_user_id: UUID) -> None:
         if liked_user_id in self.liked_user_ids:
