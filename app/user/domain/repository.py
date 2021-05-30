@@ -11,7 +11,3 @@ class UserAggregateRepository(ABC):
     @abstractmethod
     async def find_by_id(self, aggregate_id: UUID) -> UserAggregate:
         pass
-
-    @abstractmethod
-    async def find_by_screen_id(self, screen_id: str) -> UserAggregate:
-        pass
