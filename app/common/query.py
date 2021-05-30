@@ -3,5 +3,5 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Command(ABC):
+class Query(ABC):
     pass
